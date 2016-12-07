@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.4.0">
+  <bpmn:process id="cursobpm" name="Curso BPM Reloaded" isExecutable="true">
+    <bpmn:startEvent id="Inicio">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="mensaje" label="Mensaje" type="string" />
+          <camunda:formField id="fecha" label="Fecha" type="date" />
+          <camunda:formField id="usuario_candidato" label="Usuario Candidato" type="string" defaultValue="areli" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_0zd4qwk</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0zd4qwk" sourceRef="Inicio" targetRef="Aprobacion" />
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0gjn91q">
+      <bpmn:incoming>SequenceFlow_1ngxeyg</bpmn:incoming>
+      <bpmn:outgoing>seq_aprobado</bpmn:outgoing>
+      <bpmn:outgoing>seq_rechazado</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_1ngxeyg" sourceRef="Aprobacion" targetRef="ExclusiveGateway_0gjn91q" />
+    <bpmn:sequenceFlow id="seq_aprobado" sourceRef="ExclusiveGateway_0gjn91q" targetRef="mensajeAutorizacion">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${aprobado == true}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:task id="mensajeRechazo">
+      <bpmn:incoming>seq_rechazado</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_09njkbo</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:sequenceFlow id="seq_rechazado" sourceRef="ExclusiveGateway_0gjn91q" targetRef="mensajeRechazo">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">${aprobado == false}</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Fin">
+      <bpmn:incoming>SequenceFlow_1dtmfbc</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_09njkbo</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1dtmfbc" sourceRef="mensajeAutorizacion" targetRef="Fin" />
+    <bpmn:sequenceFlow id="SequenceFlow_09njkbo" sourceRef="mensajeRechazo" targetRef="Fin" />
+    <bpmn:userTask id="Aprobacion" camunda:assignee="consuelo" camunda:candidateUsers="${usuario_candidato}" camunda:candidateGroups="GrupoTI">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="aprobado" label="Aprobar tarea" type="boolean" defaultValue="true" />
+          <camunda:formField id="opciones" label="Opciones" type="string" defaultValue="opcion1">
+            <camunda:properties>
+              <camunda:property id="opcion1" value="Opcion 1" />
+              <camunda:property id="opcion2" value="Opcion 2" />
+            </camunda:properties>
+          </camunda:formField>
+          <camunda:formField id="mensaje" label="Mensaje" type="string" />
+          <camunda:formField id="fecha" label="Fecha" type="date" />
+        </camunda:formData>
+        <camunda:taskListener class="com.grupocice.tmu.Tarea1" event="complete" />
+        <camunda:taskListener class="com.grupocice.tmu.Tarea1" event="create" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>SequenceFlow_0zd4qwk</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1ngxeyg</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:task id="mensajeAutorizacion">
+      <bpmn:incoming>seq_aprobado</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1dtmfbc</bpmn:outgoing>
+    </bpmn:task>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="cursobpm">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="Inicio">
+        <dc:Bounds x="173" y="102" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0zd4qwk_di" bpmnElement="SequenceFlow_0zd4qwk">
+        <di:waypoint xsi:type="dc:Point" x="209" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="286" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="248" y="105" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0gjn91q_di" bpmnElement="ExclusiveGateway_0gjn91q" isMarkerVisible="true">
+        <dc:Bounds x="445" y="95" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="470" y="145" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1ngxeyg_di" bpmnElement="SequenceFlow_1ngxeyg">
+        <di:waypoint xsi:type="dc:Point" x="386" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="445" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="416" y="105" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_13sbwkr_di" bpmnElement="seq_aprobado">
+        <di:waypoint xsi:type="dc:Point" x="495" y="120" />
+        <di:waypoint xsi:type="dc:Point" x="557" y="120" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="526" y="105" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_0ryovcg_di" bpmnElement="mensajeRechazo">
+        <dc:Bounds x="420" y="210" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1bq7fq0_di" bpmnElement="seq_rechazado">
+        <di:waypoint xsi:type="dc:Point" x="470" y="145" />
+        <di:waypoint xsi:type="dc:Point" x="470" y="175" />
+        <di:waypoint xsi:type="dc:Point" x="470" y="175" />
+        <di:waypoint xsi:type="dc:Point" x="470" y="210" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="485" y="175" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_1w0sjc7_di" bpmnElement="Fin">
+        <dc:Bounds x="589" y="232" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="607" y="268" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1dtmfbc_di" bpmnElement="SequenceFlow_1dtmfbc">
+        <di:waypoint xsi:type="dc:Point" x="607" y="160" />
+        <di:waypoint xsi:type="dc:Point" x="607" y="232" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="622" y="196" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_09njkbo_di" bpmnElement="SequenceFlow_09njkbo">
+        <di:waypoint xsi:type="dc:Point" x="520" y="250" />
+        <di:waypoint xsi:type="dc:Point" x="589" y="250" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="555" y="225" width="0" height="0" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="UserTask_0aueuxr_di" bpmnElement="Aprobacion">
+        <dc:Bounds x="286" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_17qaeim_di" bpmnElement="mensajeAutorizacion">
+        <dc:Bounds x="557" y="80" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
